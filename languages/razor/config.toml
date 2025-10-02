@@ -1,5 +1,5 @@
 name = "Razor"
-grammar = "razor"
+grammar = "html"
 path_suffixes = ["cshtml", "razor"]
 line_comments = ["@* ", " *@"]
 block_comment = ["@*", "*@"]
