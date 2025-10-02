@@ -1,0 +1,15 @@
+id = "razor-syntax"
+name = "ASP.NET Razor Syntax"
+version = "0.1.0"
+schema_version = 1
+authors = ["Your Name <your.email@example.com>"]
+description = "Syntax highlighting support for ASP.NET Razor (.cshtml, .razor) files"
+repository = "https://github.com/your-username/razor-syntax-zed"
+
+[grammars.razor]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-embedded-template"
+rev = "38d5004a797c7cfcf7249d8c4f29f05b048265ff"
+
+[language_servers.omnisharp]
+name = "OmniSharp"
+languages = ["Razor", "C#"]

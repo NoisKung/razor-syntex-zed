@@ -1,0 +1,31 @@
+name = "Razor"
+grammar = "razor"
+path_suffixes = ["cshtml", "razor"]
+line_comments = ["@* ", " *@"]
+block_comment = ["@*", "*@"]
+tab_size = 4
+hard_tabs = false
+
+# Razor-specific word characters
+word_characters = ["@", "_"]
+
+# Auto-closing brackets configuration
+brackets = [
+  { start = "{", end = "}", close = true, newline = true },
+  { start = "[", end = "]", close = true, newline = false },
+  { start = "(", end = ")", close = true, newline = false },
+  { start = "\"", end = "\"", close = true, newline = false, not_in = ["string"] },
+  { start = "'", end = "'", close = true, newline = false, not_in = ["string"] },
+  { start = "<", end = ">", close = true, newline = false },
+]
+
+# Syntax overrides for different contexts
+[overrides.string]
+word_characters = []
+
+[overrides.comment]
+word_characters = []
+
+# Enable HTML-like tag completion
+[overrides.html_tag]
+auto_close_tags = true

@@ -1,0 +1,125 @@
+@page "/sample"
+@model SampleModel
+@using System.Collections.Generic
+@inject IJSRuntime JSRuntime
+
+@{
+    ViewData["Title"] = "Sample Razor Page";
+    var items = new List<string> { "Item 1", "Item 2", "Item 3" };
+    var currentUser = "John Doe";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    
+    <p>Welcome, @currentUser!</p>
+    
+    @if (items.Any())
+    {
+        <ul>
+            @foreach (var item in items)
+            {
+                <li class="list-item" data-value="@item">
+                    @item
+                    @if (item.Contains("2"))
+                    {
+                        <span class="highlight">(Special)</span>
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No items found.</p>
+    }
+    
+    <button onclick="handleClick()" class="btn btn-primary">
+        Click me (@DateTime.Now.ToString("HH:mm"))
+    </button>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function handleClick() {
+            alert('Button clicked at @DateTime.Now');
+            console.log('Current user: @currentUser');
+        }
+        
+        // Example of C# calling JavaScript
+        @if (Model.ShowAlert)
+        {
+            <text>
+                alert('Welcome @currentUser!');
+            </text>
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .list-item {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await JSRuntime.InvokeVoidAsync("console.log", "Component initialized");
+    }
+    
+    private async Task HandleButtonClick()
+    {
+        var result = await JSRuntime.InvokeAsync<string>("prompt", "Enter your name:");
+        if (!string.IsNullOrEmpty(result))
+        {
+            currentUser = result;
+            StateHasChanged();
+        }
+    }
+}
+
+@functions {
+    public class SampleModel
+    {
+        public bool ShowAlert { get; set; } = true;
+        public string Title { get; set; } = "Sample Page";
+    }
+    
+    private string FormatDate(DateTime date)
+    {
+        return date.ToString("yyyy-MM-dd");
+    }
+}
+
+@* This is a Razor comment
+   It can span multiple lines
+   and won't appear in the rendered HTML *@
+
+<!-- This is an HTML comment -->
+
+@{
+    // C# single-line comment
+    /* C# multi-line comment */
+    var multilineString = @"
+        This is a multi-line string
+        with @currentUser embedded
+    ";
+}
