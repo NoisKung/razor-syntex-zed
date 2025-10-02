@@ -4,12 +4,8 @@ version = "0.1.0"
 schema_version = 1
 authors = ["NoisKung <supakit021@gmail.com>"]
 description = "Syntax highlighting support for ASP.NET Razor (.cshtml, .razor) files"
-repository = "https://github.com/NoisKung/razor-syntax-zed"
+repository = "https://github.com/NoisKung/razor-syntex-zed.git"
 
 [grammars.razor]
-repository = "https://github.com/tree-sitter-grammars/tree-sitter-embedded-template"
-rev = "38d5004a797c7cfcf7249d8c4f29f05b048265ff"
-
-[language_servers.omnisharp]
-name = "OmniSharp"
-languages = ["Razor", "C#"]
+repository = "https://github.com/tree-sitter/tree-sitter-html"
+rev = "29f53d8f4f2335e61bf6418ab8958dac3282077a"

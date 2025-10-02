@@ -12,13 +12,13 @@ if ! command -v cargo &> /dev/null; then
     exit 1
 fi
 
-# Add wasm32-wasi target if not already installed
-echo "Adding wasm32-wasi target..."
-rustup target add wasm32-wasi
+# Add wasm32-wasip1 target if not already installed
+echo "Adding wasm32-wasip1 target..."
+rustup target add wasm32-wasip1
 
 # Build the extension
 echo "Building extension..."
-cargo build --release --target wasm32-wasi
+cargo build --release --target wasm32-wasip1
 
 if [ $? -eq 0 ]; then
     echo "✅ Extension built successfully!"

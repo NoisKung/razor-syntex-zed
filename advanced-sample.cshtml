@@ -1,0 +1,292 @@
+@page "/advanced-sample"
+@model AdvancedModel
+@using Microsoft.AspNetCore.Components
+@inject IConfiguration Configuration
+@inject ILogger<AdvancedModel> Logger
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Advanced Razor Features";
+    var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
+    var theme = ViewData["Theme"] as string ?? "light";
+}
+
+<!DOCTYPE html>
+<html data-theme="@theme">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My App</title>
+    
+    @* Conditional CSS loading based on theme *@
+    @if (theme == "dark")
+    {
+        <link href="~/css/dark-theme.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/css/light-theme.css" rel="stylesheet" />
+    }
+</head>
+<body>
+    @* Main navigation with conditional rendering *@
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="/">@Configuration["AppName"]</a>
+        </div>
+        
+        <div class="nav-links">
+            @if (isAuthenticated)
+            {
+                <span>Hello, @User.Identity.Name!</span>
+                <a href="/profile">Profile</a>
+                <form method="post" asp-action="Logout" class="inline-form">
+                    <button type="submit">Logout</button>
+                </form>
+            }
+            else
+            {
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            }
+        </div>
+    </nav>
+
+    @* Main content area *@
+    <main class="main-content">
+        <section class="hero">
+            <h1>@ViewBag.Title</h1>
+            <p class="subtitle">Demonstrating advanced Razor syntax highlighting</p>
+        </section>
+
+        @* Component rendering *@
+        <section class="components">
+            <h2>Components</h2>
+            
+            @* Render a component with parameters *@
+            <component type="typeof(AlertComponent)" 
+                       render-mode="ServerPrerendered" 
+                       param-Message="@("Welcome to our application!")"
+                       param-Type="@AlertType.Success" />
+            
+            @* Conditional component rendering *@
+            @if (Model.ShowWeather)
+            {
+                <partial name="_WeatherWidget" model="Model.WeatherData" />
+            }
+        </section>
+
+        @* Data display with complex expressions *@
+        <section class="data-display">
+            <h2>Data Processing</h2>
+            
+            @{
+                var processedData = Model.RawData
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Priority)
+                    .Take(10)
+                    .ToList();
+            }
+            
+            @if (processedData.Any())
+            {
+                <div class="data-grid">
+                    @foreach (var item in processedData)
+                    {
+                        <div class="data-item @(item.Priority > 5 ? "high-priority" : "normal-priority")">
+                            <h3>@Html.Raw(item.Title)</h3>
+                            <p>@item.Description</p>
+                            <small>Priority: @item.Priority | Status: @item.Status.ToString()</small>
+                            
+                            @* Nested conditional with complex expression *@
+                            @if (item.Tags?.Any() == true)
+                            {
+                                <div class="tags">
+                                    @foreach (var tag in item.Tags)
+                                    {
+                                        <span class="tag tag-@tag.Category.ToLower()">@tag.Name</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="no-data">
+                    <p>No data available at this time.</p>
+                    <button onclick="location.reload()">Refresh</button>
+                </div>
+            }
+        </section>
+
+        @* Form with validation *@
+        <section class="forms">
+            <h2>Form Example</h2>
+            
+            <form asp-action="SubmitData" method="post" class="data-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                
+                <div class="form-group">
+                    <label asp-for="Model.InputData.Name">Name:</label>
+                    <input asp-for="Model.InputData.Name" class="form-control" />
+                    <span asp-validation-for="Model.InputData.Name" class="validation-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Model.InputData.Email">Email:</label>
+                    <input asp-for="Model.InputData.Email" type="email" class="form-control" />
+                    <span asp-validation-for="Model.InputData.Email" class="validation-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Model.InputData.Category">Category:</label>
+                    <select asp-for="Model.InputData.Category" 
+                            asp-items="Html.GetEnumSelectList<DataCategory>()" 
+                            class="form-control">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+    </main>
+
+    @* Footer with dynamic content *@
+    <footer class="footer">
+        <p>&copy; @DateTime.Now.Year @Configuration["CompanyName"]. All rights reserved.</p>
+        <p>Page rendered at: @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</p>
+    </footer>
+
+    @* JavaScript section with server-side data injection *@
+    @section Scripts {
+        <script type="text/javascript">
+            // Server-injected configuration
+            window.appConfig = {
+                apiBaseUrl: '@Configuration["ApiBaseUrl"]',
+                userId: '@(User?.FindFirst("sub")?.Value ?? "")',
+                theme: '@theme',
+                isAuthenticated: @Json.Serialize(isAuthenticated),
+                featureFlags: @Html.Raw(Json.Serialize(Model.FeatureFlags))
+            };
+            
+            // Dynamic script loading based on authentication
+            @if (isAuthenticated)
+            {
+                <text>
+                console.log('User authenticated:', window.appConfig.userId);
+                loadAuthenticatedUserScripts();
+                </text>
+            }
+            else
+            {
+                <text>
+                console.log('Anonymous user');
+                loadPublicScripts();
+                </text>
+            }
+            
+            // Theme-specific initialization
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeTheme('@theme');
+                
+                @* Conditional JavaScript based on model data *@
+                @if (Model.EnableAnalytics)
+                {
+                    <text>
+                    gtag('config', '@Configuration["GoogleAnalyticsId"]');
+                    </text>
+                }
+                
+                console.log('Advanced Razor page initialized');
+            });
+        </script>
+    }
+</body>
+</html>
+
+@* Server-side functions and code blocks *@
+@functions {
+    private string GetUserDisplayName()
+    {
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            return User.FindFirst("name")?.Value ?? 
+                   User.FindFirst("email")?.Value ?? 
+                   "Unknown User";
+        }
+        return "Guest";
+    }
+    
+    private async Task<List<string>> GetUserPreferencesAsync()
+    {
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            var userId = User.FindFirst("sub")?.Value;
+            // Simulate async database call
+            await Task.Delay(50);
+            return new List<string> { "preference1", "preference2" };
+        }
+        return new List<string>();
+    }
+    
+    private string FormatDataSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        int order = 0;
+        double len = bytes;
+        
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        
+        return $"{len:0.##} {sizes[order]}";
+    }
+}
+
+@* Code section for component-like functionality *@
+@code {
+    public enum AlertType
+    {
+        Info,
+        Success,
+        Warning,
+        Error
+    }
+    
+    public enum DataCategory
+    {
+        Personal,
+        Business,
+        Technical,
+        Other
+    }
+    
+    public class DataItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int Priority { get; set; }
+        public bool IsActive { get; set; }
+        public DataStatus Status { get; set; }
+        public List<Tag> Tags { get; set; } = new();
+    }
+    
+    public class Tag
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+    }
+    
+    public enum DataStatus
+    {
+        Pending,
+        Processing,
+        Completed,
+        Failed
+    }
+}
