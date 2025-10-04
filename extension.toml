@@ -1,7 +1,0 @@
-id = "razor-syntax"
-name = "ASP.NET Razor Syntax"
-version = "0.1.0"
-schema_version = 1
-authors = ["NoisKung <supakit021@gmail.com>"]
-description = "Syntax highlighting support for ASP.NET Razor (.cshtml, .razor) files"
-repository = "https://github.com/NoisKung/razor-syntex-zed.git"
