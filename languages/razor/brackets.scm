@@ -2,9 +2,8 @@
 ("<" @open ">" @close)
 ("</" @open ">" @close)
 
-; Razor code blocks
+; Curly braces (for embedded code)
 ("{" @open "}" @close)
-("@{" @open "}" @close)
 
 ; Parentheses
 ("(" @open ")" @close)
@@ -15,6 +14,3 @@
 ; String literals
 ("\"" @open "\"" @close)
 ("'" @open "'" @close)
-
-; Razor comments
-("@*" @open "*@" @close)

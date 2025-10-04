@@ -5,9 +5,23 @@
 (razor_directive
   "@model" @name) @item
 
-(razor_directive
-  "@section"
-  name: (identifier) @name) @item
+; HTML headings for outline
+(element
+  (start_tag
+    (tag_name) @name
+    (#match? @name "h[1-6]"))
+  (text) @context) @item
+
+; HTML elements with id attributes
+(element
+  (start_tag
+    (tag_name) @context
+    (attribute
+      (attribute_name) @_attr_name
+      (quoted_attribute_value
+        (attribute_value) @name))
+    (#eq? @_attr_name "id")))
+  @item
 
 ; C# methods in code blocks
 (method_declaration
