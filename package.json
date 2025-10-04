@@ -1,0 +1,16 @@
+{
+  "name": "razor-formatter-zed",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "fmt": "node scripts/formatter/index.mjs",
+    "lsp": "node scripts/lsp/server.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-razor": "^0.9.0"
+  }
+}

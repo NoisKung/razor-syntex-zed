@@ -1,0 +1,19 @@
+schema_version = 1
+id = "noiskung.razor-formatter"
+name = "razor-formatter"
+author = "NoisKung"
+version = "0.1.0"
+description = "Format ASP.NET Razor (.razor) and CSHTML (.cshtml) using Prettier"
+repository = "https://github.com/NoisKung/razor-syntex-zed"
+license = "MIT"
+
+# Bundle HTML grammar so Razor/CSHTML can use it for highlighting
+[grammars.html]
+repository = "https://github.com/tree-sitter/tree-sitter-html"
+# Use a stable tag/commit of tree-sitter-html. Update as needed.
+rev = "5a5ca8551a179998360b4a4ca2c0f366a35acc03"
+
+# Register a simple language server that provides formatting
+[language-servers.razor-formatter]
+name = "Razor Formatter LSP"
+languages = ["Razor", "CSHTML"]

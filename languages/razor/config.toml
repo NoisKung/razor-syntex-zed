@@ -1,0 +1,7 @@
+name = "Razor"
+grammar = "html"  # TODO: replace with a Razor-specific grammar if available
+path_suffixes = ["razor"]
+line_comments = ["// "]
+
+tab_size = 4
+hard_tabs = false
